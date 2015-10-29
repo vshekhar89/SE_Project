@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/black"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@id/RelativeLayout01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:contentDescription="@string/ok">
+
+        <ImageView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@id/ImageView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/ok"
+            android:src="@drawable/ic_launcher" />
+
+        <TextView
+            android:id="@id/TextView01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:shadowColor="@android:color/white"
+            android:shadowDx="0.0"
+            android:shadowDy="0.0"
+            android:shadowRadius="10.0"
+            android:text="@string/settings"
+            android:textColor="@color/title_color"
+            android:textSize="@dimen/title_size" />
+
+        <ImageView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@id/ImageView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/ok"
+            android:src="@drawable/chilonic" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@id/ScrollViewMenu"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/ok"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@id/TextView_blank"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_line" />
+
+            <LinearLayout
+                android:id="@id/RelativeLayout02"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@id/Button_Play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10.0"
+                    android:text="@string/button_play"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@id/Button_Help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10.0"
+                    android:text="@string/button_help"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@id/textView_Feedback"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/ok"
+                android:textColor="@color/title_color"
+                android:textSize="@dimen/text_size"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@id/Spinner_Players"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@id/TextView_blank2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_line"
+                android:textSize="@dimen/menu_spacing" />
+
+            <Spinner
+                android:id="@id/Spinner_duration"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@id/TextView_blank7"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_line"
+                android:textSize="@dimen/menu_spacing" />
+
+            <Spinner
+                android:id="@id/Spinner_Difficulty"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@id/TextView_blank4"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_line"
+                android:textSize="@dimen/menu_spacing" />
+
+            <Spinner
+                android:id="@id/Spinner_Theme"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@id/TextView_blank6"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_line"
+                android:textSize="@dimen/menu_spacing" />
+
+            <Spinner
+                android:id="@id/Spinner_Volume"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@id/TextView_blank5"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_line"
+                android:textSize="@dimen/menu_spacing" />
+
+            <Button
+                android:id="@id/Button_Reset"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_settings" />
+
+            <TextView
+                android:id="@id/TextView_blank8"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/new_line"
+                android:textSize="@dimen/menu_spacing" />
+
+            <Button
+                android:id="@id/Button_Store"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/play_store" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

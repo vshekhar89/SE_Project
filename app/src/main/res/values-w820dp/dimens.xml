@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="logo_size">14.0pt</dimen>
+    <dimen name="version_size">7.0pt</dimen>
+    <dimen name="version_spacing">3.0pt</dimen>
+    <dimen name="menu_spacing">1.0pt</dimen>
+    <dimen name="title_size">16.0pt</dimen>
+    <dimen name="text_size">10.0pt</dimen>
+</resources>

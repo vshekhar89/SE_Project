@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="game_type1">notpro</string>
+    <string name="game_type2">notam</string>
+    <string name="admob_id">a150f4145a76aa0</string>
+    <string name="app_name">Air Hockey Classic HD</string>
+    <string name="settings">Menu</string>
+    <string name="scores">Scores</string>
+    <string name="help">Help</string>
+    <string name="app_logo_top">Air Hockey</string>
+    <string name="app_logo_bottom">Classic HD</string>
+    <string name="app_version_info1">"Version "</string>
+    <string name="app_version_info2">"
+Copyright © 2012 Chilon Consulting Ltd.
+All Rights Reserved."</string>
+    <string name="new_line" />
+    <string name="button_play">Play</string>
+    <string name="button_help">Help</string>
+    <string name="difficulty_easy">Difficulty - Easy</string>
+    <string name="difficulty_medium">Difficulty - Medium</string>
+    <string name="difficulty_hard">Difficulty - Difficult</string>
+    <string name="players_2">2 Players</string>
+    <string name="players_left_top">1 Player - Left / Top</string>
+    <string name="players_right_bottom">1 Player - Right / Bottom</string>
+    <string name="players_android">Demo mode</string>
+    <string name="game_over">Game Over</string>
+    <string name="winner_left_top">WINNER - Player Left / Top</string>
+    <string name="winner_right_bottom">WINNER - Player Right / Bottom</string>
+    <string name="you_win">CONGRATULATIONS - You win</string>
+    <string name="you_win2">"
+Your wins at this level are:"</string>
+    <string name="i_win">I WIN - better luck next time</string>
+    <string name="draw">DRAW - good game!</string>
+    <string name="ok">OK</string>
+    <string name="help_text">"Welcome to Air Hockey Classic HD. This is a high definition version of the classic arcade Air Hockey game. 
+
+The winner is the player with the highest score at the end of the game. 
+
+From the menu screen you may select one of 3 difficulty levels, 3 playing modes and 2 themes (day or night). In single player mode you can select which mallet you wish to play with. You can also select a two player mode where you can play against yourself or a friend. There is a demo mode available where the Android device will play against itself untill the Android device back button is pressed. 
+
+You can move the mallets, either by dragging them towards either side of the screen, or by touching the screen where you would like the mallet to go to. 
+
+You can touch the centre of the screen to pause the game, and touch again to restart the game. 
+
+At the end of the game, touch the screen to return to the main menu. 
+
+After a game in single player mode has finished, the menu screen will display the percentage of games won by the player for the current level of difficulty. 
+
+You can scroll the menu screen up and down to access all the menu options: 
+ * Changing the number of players; 
+ * Change the number of points needed to win the game, or set a time duration for the game; 
+ * Changing the difficulty level; 
+ * Changing the theme of the game; 
+ * Adjusting the sound effect volume; 
+ * Reset the score percentages for all difficulty levels. 
+
+If you enjoy the game, try the Pro version, which includes: 
+ * No Adverts; 
+ * More challenging game play. 
+
+Good luck and we wish you hours of fun!"</string>
+    <string name="tab_text">Instructions</string>
+    <string name="tab_image">Example</string>
+    <string name="menu_settings">Reset Score Statistics</string>
+    <string name="termintate_game">Do you want to end the game?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="day">Theme - Day</string>
+    <string name="night">Theme - Night</string>
+    <string name="sound_on">Sound On</string>
+    <string name="sound_off">Sound Off</string>
+    <string name="Volume_100">Sound Volume - 100%</string>
+    <string name="Volume_75">Sound Volume - 50%</string>
+    <string name="Volume_50">Sound Volume - 25%</string>
+    <string name="Volume_25">Sound Volume - 12%</string>
+    <string name="Volume_0">Sound Volume - 0%</string>
+    <string name="duration_0">Game duration - 7 Points</string>
+    <string name="duration_1">Game duration - 15 Points</string>
+    <string name="duration_2">Game duration - 1 minute</string>
+    <string name="duration_3">Game duration - 2 minutes</string>
+    <string name="duration_4">Game duration - 5 minutes</string>
+    <string name="duration_5">Game duration - 10 minutes</string>
+    <string name="duration_6">Game duration - 15 minutes</string>
+    <string name="play_store">See all our Apps in Play Store</string>
+    <string name="play_store_exception">Could not open the Play Store</string>
+    <string name="stats_reset">Statistics reset</string>
+</resources>

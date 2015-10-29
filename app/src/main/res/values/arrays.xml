@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="difficulties">
+        <item>@string/difficulty_easy</item>
+        <item>@string/difficulty_medium</item>
+        <item>@string/difficulty_hard</item>
+    </string-array>
+    <string-array name="players">
+        <item>@string/players_right_bottom</item>
+        <item>@string/players_left_top</item>
+        <item>@string/players_2</item>
+        <item>@string/players_android</item>
+    </string-array>
+    <string-array name="themes">
+        <item>@string/day</item>
+        <item>@string/night</item>
+    </string-array>
+    <string-array name="volume">
+        <item>@string/Volume_100</item>
+        <item>@string/Volume_75</item>
+        <item>@string/Volume_50</item>
+        <item>@string/Volume_25</item>
+        <item>@string/Volume_0</item>
+    </string-array>
+    <string-array name="duration">
+        <item>@string/duration_0</item>
+        <item>@string/duration_1</item>
+        <item>@string/duration_2</item>
+        <item>@string/duration_3</item>
+        <item>@string/duration_4</item>
+        <item>@string/duration_5</item>
+        <item>@string/duration_6</item>
+    </string-array>
+</resources>
