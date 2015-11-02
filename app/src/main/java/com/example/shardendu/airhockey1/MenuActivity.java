@@ -285,7 +285,7 @@ public class MenuActivity extends CommonActivity
                         int i = MenuActivity.this.mGameSettings.getInt("GameOver", 0);
                         MenuActivity.this.diff = MenuActivity.this.mGameSettings.getInt("Difficulty", 0);
                         int j = MenuActivity.this.mGameSettings.getInt("Players", 0);
-                        int k = 0;
+                        int k = 1;
                         int m = 0;
                         Log.d("chilon", "result = " + i);
                         String str1;

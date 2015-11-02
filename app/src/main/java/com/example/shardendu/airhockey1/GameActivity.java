@@ -14,10 +14,12 @@
         import android.graphics.BlurMaskFilter;
         import android.graphics.BlurMaskFilter.Blur;
         import android.graphics.Canvas;
+        import android.graphics.Color;
         import android.graphics.Paint;
         import android.graphics.Paint.Align;
         import android.graphics.Paint.Style;
         import android.graphics.Path;
+        import android.graphics.PorterDuff;
         import android.graphics.Typeface;
         import android.media.SoundPool;
         import android.os.Bundle;
@@ -30,6 +32,7 @@
         import android.view.MotionEvent;
         import android.view.View;
         import android.view.ViewGroup.LayoutParams;
+        import android.widget.Button;
         import android.widget.LinearLayout;
         import android.widget.RelativeLayout;
 
@@ -39,6 +42,17 @@
         //import com.google.ads.AdView;
 
 public class GameActivity extends CommonActivity {
+
+
+    public void setPlayerMalletSize(){
+        Background bck = new Background(this);
+        bck.setPlayerMalletSize();
+    }
+
+    public void setGoalSize(){
+        Background bck = new Background(this);
+        bck.setGoalSize();
+    }
     static int[] ballBlurColor;
     static int[] ballColor;
     static float ballRad;
@@ -53,6 +67,7 @@ public class GameActivity extends CommonActivity {
     static int[] edgeTopColor;
     static int[] fieldColor;
     static float goalWidth;
+    static float goalWidthPlayer;
     static int[] lineColor;
     static int[] malletBottomBlurColor;
     static int[] malletBottomInnerColor;
@@ -61,6 +76,9 @@ public class GameActivity extends CommonActivity {
     static float malletInnerRad;
     static float malletMiddleRad;
     static float malletOuterRad;
+    static float malletInnerRad2;
+    static float malletMiddleRad2;
+    static float malletOuterRad2;
     static int[] malletTopBlurColor;
     static int[] malletTopInnerColor;
     static int[] malletTopMiddleColor;
@@ -149,16 +167,24 @@ public class GameActivity extends CommonActivity {
     long gameDuration;
     long gameEndTime;
     int gameEnded;
+    long trackMalletTime;
+    long trackGoalTime;
+
     RelativeLayout gameLayout;
     String gameType;
     float goalOffset;
     float goalWidthScaled;
+    float goalWidthScaledPlayer;
     int hitFlag;
     long hitTime;
     int landscape;
     float malletInnerRadScaled;
+    float malletInnerRadScaled2;
     float malletMiddleRadScaled;
+    //new variable
+    float malletMiddleRadScaled2;
     float malletOuterRadScaled;
+    float malletOuterRadScaled2;
     Paint paint;
     Paint paintBlur;
     Path path;
@@ -170,6 +196,7 @@ public class GameActivity extends CommonActivity {
     int players;
     float[] relBallSize;
     float[] relBatSize;
+    float[] relBatSize2;
     float[] relGoalSize;
     float[] relVel;
     float[] relVelPro;
@@ -188,8 +215,6 @@ public class GameActivity extends CommonActivity {
     int soundSet;
     int soundWall;
     int soundWallAct;
-    String textBottom;
-    String textTop;
     int theme;
     int useSound;
     float velMaxBottom;
@@ -199,11 +224,52 @@ public class GameActivity extends CommonActivity {
     float volume;
 
     class Background extends View {
+
+
         public Background(Context context) {
             super(context);
             Log.d(CommonActivity.TAG, "Background");
         }
 
+        public void setPlayerMalletSize(){
+            if(bgndLoaded!=1) {
+                GameActivity.this.malletMiddleRadScaled = (GameActivity.malletMiddleRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+                GameActivity.this.malletOuterRadScaled = (GameActivity.malletOuterRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+                GameActivity.this.malletInnerRadScaled = (GameActivity.malletInnerRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+            }
+            else{
+                if(System.currentTimeMillis()-trackMalletTime > 30000){
+                    malletMiddleRad = 0.06f;
+                    malletOuterRad = 0.09f;
+                    malletInnerRad = 0.04f;
+                }
+                else {
+                    malletMiddleRad = 0.09f;
+                    malletOuterRad = 0.13f;
+                    malletInnerRad = 0.06f;
+               }
+                GameActivity.this.malletMiddleRadScaled = (GameActivity.malletMiddleRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+                GameActivity.this.malletOuterRadScaled = (GameActivity.malletOuterRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+                GameActivity.this.malletInnerRadScaled = (GameActivity.malletInnerRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+            }
+        }
+
+        public void setGoalSize(){
+
+            if(bgndLoaded!=1) {
+                goalWidthPlayer = 0.39f;
+                GameActivity.this.goalWidthScaledPlayer = (GameActivity.goalWidthPlayer * ((float) GameActivity.this.screenW)) * GameActivity.this.relGoalSize[GameActivity.this.difficulty];
+            }
+            else {
+                if (System.currentTimeMillis() - trackGoalTime > 30000) {
+                    goalWidthPlayer = 0.39f;
+                    GameActivity.this.goalWidthScaledPlayer = (GameActivity.goalWidthPlayer * ((float) GameActivity.this.screenW)) * GameActivity.this.relGoalSize[GameActivity.this.difficulty];
+                } else {
+                    goalWidthPlayer = 0.6f;
+                    GameActivity.this.goalWidthScaledPlayer = (GameActivity.goalWidthPlayer * ((float) GameActivity.this.screenW)) * GameActivity.this.relGoalSize[GameActivity.this.difficulty];
+                }
+            }
+        }
         public void onSizeChanged(int w, int h, int oldw, int oldh) {
             super.onSizeChanged(w, h, oldw, oldh);
             GameActivity.this.screenW = w;
@@ -219,10 +285,16 @@ public class GameActivity extends CommonActivity {
             }
             GameActivity.this.edgeLocScaled = GameActivity.edgeLoc * ((float) GameActivity.this.screenW);
             GameActivity.this.goalWidthScaled = (GameActivity.goalWidth * ((float) GameActivity.this.screenW)) * GameActivity.this.relGoalSize[GameActivity.this.difficulty];
+            setGoalSize();
+            GameActivity.this.goalWidthScaledPlayer = (GameActivity.goalWidthPlayer * ((float) GameActivity.this.screenW)) * GameActivity.this.relGoalSize[GameActivity.this.difficulty];
             GameActivity.this.ballRadScaled = (GameActivity.ballRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBallSize[GameActivity.this.difficulty];
-            GameActivity.this.malletMiddleRadScaled = (GameActivity.malletMiddleRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
-            GameActivity.this.malletOuterRadScaled = (GameActivity.malletOuterRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
-            GameActivity.this.malletInnerRadScaled = (GameActivity.malletInnerRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+            //GameActivity.this.malletMiddleRadScaled = (GameActivity.malletMiddleRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+            //GameActivity.this.malletOuterRadScaled = (GameActivity.malletOuterRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+            //GameActivity.this.malletInnerRadScaled = (GameActivity.malletInnerRad * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+            GameActivity.this.malletMiddleRadScaled2 = (GameActivity.malletMiddleRad2 * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+            GameActivity.this.malletOuterRadScaled2 = (GameActivity.malletOuterRad2 * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+            GameActivity.this.malletInnerRadScaled2 = (GameActivity.malletInnerRad2 * ((float) GameActivity.this.screenW)) * GameActivity.this.relBatSize[GameActivity.this.difficulty];
+            setPlayerMalletSize();
             GameActivity.this.velMaxScaled = (((float) GameActivity.this.screenW) / GameActivity.velMax) * GameActivity.this.relVel[GameActivity.this.difficulty];
             GameActivity gameActivity = GameActivity.this;
             float f = ((float) GameActivity.this.screenW) / GameActivity.velMaxPlayer;
@@ -265,8 +337,11 @@ public class GameActivity extends CommonActivity {
             System.gc();
         }
 
-        public void onDraw(Canvas canvas) {
+        /*public void onDraw(Canvas canvas) {
             super.onDraw(canvas);
+
+            setPlayerMalletSize();
+            setGoalSize();
             if (GameActivity.this.bgndLoaded == 0) {
                 GameActivity.this.bgndLoaded = 1;
                 GameActivity.this.coordX = GameActivity.this.screenW;
@@ -281,6 +356,9 @@ public class GameActivity extends CommonActivity {
                 GameActivity.this.paint.setStrokeWidth((float) (GameActivity.this.screenH / 115));
                 GameActivity.this.paintBlur.setAntiAlias(true);
                 GameActivity.this.paintBlur.setStyle(Style.FILL);
+
+                copy = bgndCanvas;
+
                 GameActivity.this.coordX = 0;
                 GameActivity.this.coordY = GameActivity.this.screenH2;
                 getcoords();
@@ -293,7 +371,7 @@ public class GameActivity extends CommonActivity {
                 GameActivity.this.coordX = GameActivity.this.screenW2;
                 GameActivity.this.coordY = GameActivity.this.screenH2;
                 getcoords();
-                bgndCanvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.goalWidthScaled / 2.0f, GameActivity.this.paint);
+                bgndCanvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.goalWidthScaled/ 2.0f, GameActivity.this.paint);
                 GameActivity.this.coordX = GameActivity.this.screenW2;
                 GameActivity.this.coordY = GameActivity.this.screenH - ((int) GameActivity.this.edgeLocScaled);
                 getcoords();
@@ -301,7 +379,7 @@ public class GameActivity extends CommonActivity {
                 GameActivity.this.coordX = GameActivity.this.screenW2;
                 GameActivity.this.coordY = (int) GameActivity.this.edgeLocScaled;
                 getcoords();
-                bgndCanvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.goalWidthScaled / 2.0f, GameActivity.this.paint);
+                bgndCanvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.goalWidthScaledPlayer / 2.0f, GameActivity.this.paint);
                 GameActivity.this.paint.setAntiAlias(true);
                 GameActivity.this.paint.setColor(-GameActivity.lineColor[GameActivity.this.theme]);
                 GameActivity.this.paint.setStyle(Style.FILL);
@@ -362,7 +440,7 @@ public class GameActivity extends CommonActivity {
                 bgndCanvas.drawPath(GameActivity.this.path, GameActivity.this.paintBlur);
                 GameActivity.this.paint.setColor(GameActivity.edgeTopColor[GameActivity.this.theme]);
                 GameActivity.this.ab = (int) GameActivity.this.edgeLocScaled;
-                GameActivity.this.aa = (GameActivity.this.screenW - ((int) GameActivity.this.goalWidthScaled)) / 2;
+                GameActivity.this.aa = (GameActivity.this.screenW - ((int) GameActivity.this.goalWidthScaledPlayer)) / 2;
                 GameActivity.this.ac = 0;
                 drawedges();
                 bgndCanvas.drawPath(GameActivity.this.path, GameActivity.this.paint);
@@ -379,10 +457,14 @@ public class GameActivity extends CommonActivity {
                 drawedges();
                 bgndCanvas.drawPath(GameActivity.this.path, GameActivity.this.paint);
             }
+            else{
+                //bgndCanvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.goalWidthScaled / 2.0f, GameActivity.this.paint);
+            }
             canvas.drawBitmap(GameActivity.this.bgndBitmap, 0.0f, 0.0f, null);
-        }
+        }*/
 
         private void drawedges() {
+
             GameActivity.this.path.reset();
             GameActivity.this.coordX = 0;
             GameActivity.this.coordY = GameActivity.this.ac;
@@ -405,10 +487,12 @@ public class GameActivity extends CommonActivity {
                 GameActivity.this.coordY = GameActivity.this.ac + GameActivity.this.ab;
             }
             getcoords();
+
             GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
             GameActivity.this.coordX = 0;
             GameActivity.this.coordY = GameActivity.this.ac;
             getcoords();
+
             GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
             GameActivity.this.coordX = GameActivity.this.screenW;
             GameActivity.this.coordY = GameActivity.this.ac;
@@ -424,12 +508,15 @@ public class GameActivity extends CommonActivity {
                 GameActivity.this.coordY = GameActivity.this.ac + GameActivity.this.ab;
             }
             getcoords();
+
             GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
             GameActivity.this.coordX = GameActivity.this.screenW;
             GameActivity.this.coordY = GameActivity.this.ac - GameActivity.this.ab;
+
             if (GameActivity.this.coordY < 0) {
                 GameActivity.this.coordY = GameActivity.this.ac + GameActivity.this.ab;
             }
+
             getcoords();
             GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
             GameActivity.this.coordX = GameActivity.this.screenW;
@@ -457,18 +544,22 @@ public class GameActivity extends CommonActivity {
                 GameActivity.this.coordY = GameActivity.this.ac + GameActivity.this.ab;
             }
             getcoords();
+
             GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
             GameActivity.this.coordX = 0;
             GameActivity.this.coordY = GameActivity.this.ac;
             getcoords();
+
             GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
             GameActivity.this.coordX = GameActivity.this.screenW;
             GameActivity.this.coordY = GameActivity.this.ac;
             getcoords();
+
             GameActivity.this.path.moveTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
             GameActivity.this.coordX = GameActivity.this.screenW - GameActivity.this.ab;
             GameActivity.this.coordY = GameActivity.this.ac;
             getcoords();
+
             GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
             GameActivity.this.coordX = GameActivity.this.screenW - GameActivity.this.ab;
             GameActivity.this.coordY = GameActivity.this.screenH2;
@@ -595,16 +686,138 @@ public class GameActivity extends CommonActivity {
 
         public void onDraw(Canvas canvas) {
             super.onDraw(canvas);
-            if (GameActivity.this.soundMalletAct > 0) {
+
+            Background back = new Background(GameActivity.this);
+            setGoalSize();
+            //if (GameActivity.this.bgndLoaded == 0) {
+                GameActivity.this.bgndLoaded = 1;
+                GameActivity.this.coordX = GameActivity.this.screenW;
+                GameActivity.this.coordY = GameActivity.this.screenH;
+                getcoords();
+                GameActivity.this.bgndBitmap = Bitmap.createBitmap(GameActivity.this.coordX, GameActivity.this.coordY, Config.RGB_565);
+                Canvas bgndCanvas = new Canvas(GameActivity.this.bgndBitmap);
+                bgndCanvas.drawColor(GameActivity.fieldColor[GameActivity.this.theme]);
+                GameActivity.this.paint.setAntiAlias(true);
+                GameActivity.this.paint.setColor(GameActivity.lineColor[GameActivity.this.theme]);
+                GameActivity.this.paint.setStyle(Style.STROKE);
+                GameActivity.this.paint.setStrokeWidth((float) (GameActivity.this.screenH / 115));
+                GameActivity.this.paintBlur.setAntiAlias(true);
+                GameActivity.this.paintBlur.setStyle(Style.FILL);
+
+                //copy = bgndCanvas;
+
+                GameActivity.this.coordX = 0;
+                GameActivity.this.coordY = GameActivity.this.screenH2;
+                getcoords();
+                GameActivity.this.aa = GameActivity.this.coordX;
+                GameActivity.this.ab = GameActivity.this.coordY;
+                GameActivity.this.coordX = GameActivity.this.screenW;
+                GameActivity.this.coordY = GameActivity.this.screenH2;
+                getcoords();
+                bgndCanvas.drawLine((float) GameActivity.this.aa, (float) GameActivity.this.ab, (float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.paint);
+                GameActivity.this.coordX = GameActivity.this.screenW2;
+                GameActivity.this.coordY = GameActivity.this.screenH2;
+                getcoords();
+                bgndCanvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.goalWidthScaled/ 2.0f, GameActivity.this.paint);
+                GameActivity.this.coordX = GameActivity.this.screenW2;
+                GameActivity.this.coordY = GameActivity.this.screenH - ((int) GameActivity.this.edgeLocScaled);
+                getcoords();
+                bgndCanvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.goalWidthScaled / 2.0f, GameActivity.this.paint);
+                GameActivity.this.coordX = GameActivity.this.screenW2;
+                GameActivity.this.coordY = (int) GameActivity.this.edgeLocScaled;
+                getcoords();
+                bgndCanvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.goalWidthScaledPlayer / 2.0f, GameActivity.this.paint);
+                GameActivity.this.paint.setAntiAlias(true);
+                GameActivity.this.paint.setColor(-GameActivity.lineColor[GameActivity.this.theme]);
+                GameActivity.this.paint.setStyle(Style.FILL);
+                GameActivity.this.path.reset();
                 GameActivity gameActivity = GameActivity.this;
+                int i = (GameActivity.this.screenW - ((int) GameActivity.this.goalWidthScaled)) / 2;
+                GameActivity.this.coordX = i;
+                gameActivity.aa = i;
+                GameActivity.this.ab = (int) GameActivity.this.edgeLocScaled;
+                GameActivity.this.coordX = GameActivity.this.aa;
+                GameActivity.this.coordY = 0;
+                getcoords();
+                GameActivity.this.path.moveTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                GameActivity.this.coordX = GameActivity.this.screenW - GameActivity.this.aa;
+                GameActivity.this.coordY = 0;
+                getcoords();
+                GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                GameActivity.this.coordX = GameActivity.this.screenW - GameActivity.this.aa;
+                GameActivity.this.coordY = GameActivity.this.ab;
+                getcoords();
+                GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                GameActivity.this.coordX = GameActivity.this.aa;
+                GameActivity.this.coordY = GameActivity.this.ab;
+                getcoords();
+                GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                GameActivity.this.coordX = GameActivity.this.aa;
+                GameActivity.this.coordY = 0;
+                getcoords();
+                GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                GameActivity.this.coordX = GameActivity.this.aa;
+                GameActivity.this.coordY = GameActivity.this.screenH;
+                getcoords();
+                GameActivity.this.path.moveTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                GameActivity.this.coordX = GameActivity.this.screenW - GameActivity.this.aa;
+                GameActivity.this.coordY = GameActivity.this.screenH;
+                getcoords();
+                GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                GameActivity.this.coordX = GameActivity.this.screenW - GameActivity.this.aa;
+                GameActivity.this.coordY = GameActivity.this.screenH - GameActivity.this.ab;
+                getcoords();
+                GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                GameActivity.this.coordX = GameActivity.this.aa;
+                GameActivity.this.coordY = GameActivity.this.screenH - GameActivity.this.ab;
+                getcoords();
+                GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                GameActivity.this.coordX = GameActivity.this.aa;
+                GameActivity.this.coordY = GameActivity.this.screenH;
+                getcoords();
+                GameActivity.this.path.lineTo((float) GameActivity.this.coordX, (float) GameActivity.this.coordY);
+                bgndCanvas.drawPath(GameActivity.this.path, GameActivity.this.paint);
+                GameActivity.this.paint.setAntiAlias(true);
+                GameActivity.this.paint.setStyle(Style.FILL);
+                GameActivity.this.paintBlur.setColor(GameActivity.edgeTopBlurColor[GameActivity.this.theme]);
+                GameActivity.this.ab = (((int) GameActivity.this.edgeLocScaled) * 4) / 2;
+                GameActivity.this.aa = (GameActivity.this.screenW - ((int) (GameActivity.this.goalWidthScaled - GameActivity.this.edgeLocScaled))) / 2;
+                GameActivity.this.ac = 0;
+                back.drawedges();
+                bgndCanvas.drawPath(GameActivity.this.path, GameActivity.this.paintBlur);
+                GameActivity.this.paint.setColor(GameActivity.edgeTopColor[GameActivity.this.theme]);
+                GameActivity.this.ab = (int) GameActivity.this.edgeLocScaled;
+                GameActivity.this.aa = (GameActivity.this.screenW - ((int) GameActivity.this.goalWidthScaledPlayer)) / 2;
+                GameActivity.this.ac = 0;
+                back.drawedges();
+                bgndCanvas.drawPath(GameActivity.this.path, GameActivity.this.paint);
+                GameActivity.this.paintBlur.setColor(GameActivity.edgeBottomBlurColor[GameActivity.this.theme]);
+                GameActivity.this.ab = (((int) GameActivity.this.edgeLocScaled) * 4) / 2;
+                GameActivity.this.aa = (GameActivity.this.screenW - ((int) (GameActivity.this.goalWidthScaled - GameActivity.this.edgeLocScaled))) / 2;
+                GameActivity.this.ac = GameActivity.this.screenH;
+                back.drawedges();
+                bgndCanvas.drawPath(GameActivity.this.path, GameActivity.this.paintBlur);
+                GameActivity.this.paint.setColor(GameActivity.edgeBottomColor[GameActivity.this.theme]);
+                GameActivity.this.ab = (int) GameActivity.this.edgeLocScaled;
+                GameActivity.this.aa = (GameActivity.this.screenW - ((int) GameActivity.this.goalWidthScaled)) / 2;
+                GameActivity.this.ac = GameActivity.this.screenH;
+                back.drawedges();
+                bgndCanvas.drawPath(GameActivity.this.path, GameActivity.this.paint);
+            //}
+            canvas.drawBitmap(GameActivity.this.bgndBitmap, 0.0f, 0.0f, null);
+
+
+
+            if (GameActivity.this.soundMalletAct > 0) {
+                gameActivity = GameActivity.this;
                 gameActivity.soundMalletAct--;
             }
             if (GameActivity.this.soundWallAct > 0) {
-                GameActivity gameActivity = GameActivity.this;
+                gameActivity = GameActivity.this;
                 gameActivity.soundWallAct--;
             }
             if (GameActivity.this.soundGoalAct > 0) {
-                GameActivity gameActivity = GameActivity.this;
+                gameActivity = GameActivity.this;
                 gameActivity.soundGoalAct--;
             }
             GameActivity.this.drawCanvas = canvas;
@@ -625,7 +838,7 @@ public class GameActivity extends CommonActivity {
             } else {
                 GameActivity.this.currentTime = System.currentTimeMillis();
                 if (GameActivity.this.currentTime == GameActivity.this.ballTime) {
-                    GameActivity gameActivity = GameActivity.this;
+                    gameActivity = GameActivity.this;
                     gameActivity.ballTime--;
                 }
                 if (GameActivity.this.ballGoY <= 0.0f) {
@@ -710,6 +923,8 @@ public class GameActivity extends CommonActivity {
                     GameActivity.this.batTopCenterX = GameActivity.this.edgeLocScaled + GameActivity.this.malletOuterRadScaled;
                 }
             }
+            setPlayerMalletSize();
+            setGoalSize();
             GameActivity.this.coordX = (int) GameActivity.this.batBottomCenterX;
             GameActivity.this.coordY = (int) GameActivity.this.batBottomCenterY;
             getcoords();
@@ -728,19 +943,19 @@ public class GameActivity extends CommonActivity {
             getcoords();
             GameActivity.this.paint.setAntiAlias(true);
             GameActivity.this.paintBlur.setColor(GameActivity.malletTopBlurColor[GameActivity.this.theme]);
-            canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, (GameActivity.this.malletOuterRadScaled * 5.0f) / 4.0f, GameActivity.this.paintBlur);
+            canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, (GameActivity.this.malletOuterRadScaled2 * 5.0f) / 4.0f, GameActivity.this.paintBlur);
             GameActivity.this.paint.setColor(GameActivity.malletTopOuterColor[GameActivity.this.theme]);
-            canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.malletOuterRadScaled, GameActivity.this.paint);
+            canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.malletOuterRadScaled2, GameActivity.this.paint);
             GameActivity.this.paint.setColor(GameActivity.malletTopMiddleColor[GameActivity.this.theme]);
-            canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.malletMiddleRadScaled, GameActivity.this.paint);
+            canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.malletMiddleRadScaled2, GameActivity.this.paint);
             GameActivity.this.paint.setColor(GameActivity.malletTopInnerColor[GameActivity.this.theme]);
-            canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.malletInnerRadScaled, GameActivity.this.paint);
+            canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.malletInnerRadScaled2, GameActivity.this.paint);
             if (GameActivity.this.paused == 0) {
                 if (GameActivity.this.gameEnded > 0) {
                     GameActivity.this.ballGoX = (float) (-GameActivity.this.screenW);
                 } else if (GameActivity.this.gameEnded == 0) {
                     GameActivity.this.ballGoX = (float) (-GameActivity.this.screenW);
-                   GameActivity gameActivity = GameActivity.this;
+                    gameActivity = GameActivity.this;
                     GameActivity gameActivity2 = GameActivity.this;
                     float f = (float) GameActivity.this.screenW2;
                     GameActivity.this.batTopStartX = f;
@@ -748,7 +963,7 @@ public class GameActivity extends CommonActivity {
                     gameActivity.batTopGoX = f;
                     gameActivity = GameActivity.this;
                     gameActivity2 = GameActivity.this;
-                    f = (GameActivity.this.goalWidthScaled / 2.0f) + GameActivity.this.edgeLocScaled;
+                    f = (GameActivity.this.goalWidthScaled / 1.0f) + GameActivity.this.edgeLocScaled;
                     GameActivity.this.batTopStartY = f;
                     gameActivity2.batTopCenterY = f;
                     gameActivity.batTopGoY = f;
@@ -790,6 +1005,7 @@ public class GameActivity extends CommonActivity {
                             GameActivity.this.paint.setAntiAlias(true);
                             GameActivity.this.paint.setColor(GameActivity.ballColor[GameActivity.this.theme]);
                             canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.ballRadScaled, GameActivity.this.paint);
+                            //canvas.drawCircle((float) GameActivity.this.coordX-20, (float) GameActivity.this.coordY-20, GameActivity.this.ballRadScaled, GameActivity.this.paint);
                         } else {
                             if (GameActivity.this.scoreTop == GameActivity.this.scoreBottom) {
                                 GameActivity.this.gameEnded = 3;
@@ -807,7 +1023,7 @@ public class GameActivity extends CommonActivity {
                     GameActivity.this.ballGoX = (((float) (GameActivity.this.currentTime - GameActivity.this.ballTime)) * GameActivity.this.ballVelX) + GameActivity.this.ballStartX;
                     GameActivity.this.ballGoY = (((float) (GameActivity.this.currentTime - GameActivity.this.ballTime)) * GameActivity.this.ballVelY) + GameActivity.this.ballStartY;
                     if (GameActivity.this.currentTime == GameActivity.this.ballTime) {
-                        GameActivity gameActivity = GameActivity.this;
+                        gameActivity = GameActivity.this;
                         gameActivity.ballTime--;
                     }
                     GameActivity.this.fa = ((((float) GameActivity.this.screenW) - GameActivity.this.goalWidthScaled) - (GameActivity.this.ballRadScaled / 2.0f)) / 2.0f;
@@ -816,13 +1032,13 @@ public class GameActivity extends CommonActivity {
                         if (GameActivity.this.ballGoX <= GameActivity.this.fa || GameActivity.this.ballGoX >= GameActivity.this.fb) {
                             GameActivity.this.ballGoY = ((((float) GameActivity.this.screenH) - GameActivity.this.edgeLocScaled) - GameActivity.this.ballRadScaled) - 1.0f;
                             GameActivity.this.ballVelY = (-GameActivity.this.ballVelY) * GameActivity.decelHit;
-                           GameActivity  gameActivity = GameActivity.this;
+                            gameActivity = GameActivity.this;
                             gameActivity.ballVelX *= GameActivity.decelHit;
                             soundwall();
                         } else if (GameActivity.this.ballGoY > ((float) GameActivity.this.screenH)) {
                             GameActivity.this.gameEnded = 0;
                             GameActivity.this.ballTime = GameActivity.this.currentTime;
-                            GameActivity gameActivity = GameActivity.this;
+                            gameActivity = GameActivity.this;
                             gameActivity.scoreTop++;
                             if (GameActivity.this.scoreTop > 6 && GameActivity.this.gameDuration == 6000000000000L) {
                                 GameActivity.this.gameEndTime = 0;
@@ -848,13 +1064,13 @@ public class GameActivity extends CommonActivity {
                         if (GameActivity.this.ballGoX <= GameActivity.this.fa || GameActivity.this.ballGoX >= GameActivity.this.fb) {
                             GameActivity.this.ballGoY = (GameActivity.this.edgeLocScaled + GameActivity.this.ballRadScaled) + 1.0f;
                             GameActivity.this.ballVelY = (-GameActivity.this.ballVelY) * GameActivity.decelHit;
-                            GameActivity gameActivity = GameActivity.this;
+                            gameActivity = GameActivity.this;
                             gameActivity.ballVelX *= GameActivity.decelHit;
                             soundwall();
                         } else if (GameActivity.this.ballGoY < 0.0f) {
                             GameActivity.this.gameEnded = 0;
                             GameActivity.this.ballTime = GameActivity.this.currentTime;
-                            GameActivity gameActivity = GameActivity.this;
+                            gameActivity = GameActivity.this;
                             gameActivity.scoreBottom++;
                             if (GameActivity.this.scoreBottom > 6 && GameActivity.this.gameDuration == 6000000000000L) {
                                 GameActivity.this.gameEndTime = 0;
@@ -879,7 +1095,7 @@ public class GameActivity extends CommonActivity {
                     if (GameActivity.this.ballGoX + GameActivity.this.ballRadScaled >= ((float) GameActivity.this.screenW) - GameActivity.this.edgeLocScaled) {
                         GameActivity.this.ballGoX = ((((float) GameActivity.this.screenW) - GameActivity.this.edgeLocScaled) - GameActivity.this.ballRadScaled) - 1.0f;
                         GameActivity.this.ballVelX = (-GameActivity.this.ballVelX) * GameActivity.decelHit;
-                        GameActivity gameActivity = GameActivity.this;
+                        gameActivity = GameActivity.this;
                         gameActivity.ballVelY *= GameActivity.decelHit;
                         soundwall();
                         if (GameActivity.this.ballVelX + GameActivity.this.ballVelY < GameActivity.this.velMinScaled) {
@@ -892,7 +1108,7 @@ public class GameActivity extends CommonActivity {
                     if (GameActivity.this.ballGoX - GameActivity.this.ballRadScaled <= GameActivity.this.edgeLocScaled) {
                         GameActivity.this.ballGoX = (GameActivity.this.edgeLocScaled + GameActivity.this.ballRadScaled) + 1.0f;
                         GameActivity.this.ballVelX = (-GameActivity.this.ballVelX) * GameActivity.decelHit;
-                        GameActivity gameActivity = GameActivity.this;
+                        gameActivity = GameActivity.this;
                         gameActivity.ballVelY *= GameActivity.decelHit;
                         soundwall();
                         if (GameActivity.this.ballVelX + GameActivity.this.ballVelY < GameActivity.this.velMinScaled) {
@@ -909,7 +1125,7 @@ public class GameActivity extends CommonActivity {
                     } else {
                         GameActivity.this.aa = ((int) ((Math.abs(GameActivity.this.fi) * 2.0f) / GameActivity.this.malletOuterRadScaled)) + 1;
                     }
-                    GameActivity gameActivity = GameActivity.this;
+                    gameActivity = GameActivity.this;
                     gameActivity.fh /= (float) GameActivity.this.aa;
                     gameActivity = GameActivity.this;
                     gameActivity.fi /= (float) GameActivity.this.aa;
@@ -1057,8 +1273,10 @@ public class GameActivity extends CommonActivity {
             GameActivity.this.paint.setAntiAlias(true);
             GameActivity.this.paintBlur.setColor(GameActivity.ballBlurColor[GameActivity.this.theme]);
             canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, (GameActivity.this.ballRadScaled * 7.0f) / 4.0f, GameActivity.this.paintBlur);
+            canvas.drawCircle((float) GameActivity.this.coordX-100, (float) GameActivity.this.coordY-20, (GameActivity.this.ballRadScaled * 7.0f) / 4.0f, GameActivity.this.paintBlur);
             GameActivity.this.paint.setColor(GameActivity.ballColor[GameActivity.this.theme]);
             canvas.drawCircle((float) GameActivity.this.coordX, (float) GameActivity.this.coordY, GameActivity.this.ballRadScaled, GameActivity.this.paint);
+            canvas.drawCircle((float) GameActivity.this.coordX-20, (float) GameActivity.this.coordY, GameActivity.this.ballRadScaled-20, GameActivity.this.paint);
             GameActivity.this.paint.setStyle(Style.FILL);
             GameActivity.this.paint.setAntiAlias(true);
             GameActivity.this.paint.setTextSize((float) (GameActivity.this.screenW / 10));
@@ -1075,10 +1293,13 @@ public class GameActivity extends CommonActivity {
                 canvas.drawText(new StringBuilder(String.valueOf(Integer.toString(GameActivity.this.scoreTop))).append("  ").toString(), (float) GameActivity.this.screenW, (float) (GameActivity.this.screenH / 4), GameActivity.this.paint);
                 canvas.drawText(new StringBuilder(String.valueOf(Integer.toString(GameActivity.this.scoreBottom))).append("  ").toString(), (float) GameActivity.this.screenW, (float) ((GameActivity.this.screenH * 3) / 4), GameActivity.this.paint);
             }
+
+            //end the game if the game end time less than the current time
             if (GameActivity.this.players != 3 && GameActivity.this.currentTime > GameActivity.this.gameEndTime) {
                 if (GameActivity.this.gameEnded == -1) {
                     GameActivity.this.gameEnded = 0;
                 }
+
                 GameActivity.this.paint.setColor(GameActivity.this.dataColors[(GameActivity.this.theme * GameActivity.colorsNo) + 0]);
                 GameActivity.this.paint.setTextAlign(Align.CENTER);
                 GameActivity.this.coordX = GameActivity.this.screenW / 2;
@@ -1240,7 +1461,8 @@ public class GameActivity extends CommonActivity {
     public GameActivity() {
         this.relVelPro = new float[]{0.6f, 0.8f, 1.0f};
         this.relBatSize = new float[]{1.0f, 0.8f, 0.6f};
-        this.relGoalSize = new float[]{1.0f, 0.9f, 0.8f};
+        this.relBatSize2= new float[]{2.0f,1f,0.8f};
+        this.relGoalSize = new float[]{1.0f, 0.9f, 1.3f};
         this.relBallSize = new float[]{1.0f, 0.9f, 0.8f};
         this.relVel = new float[]{0.6f, 0.8f, 1.0f};
         this.paused = 0;
@@ -1251,6 +1473,7 @@ public class GameActivity extends CommonActivity {
         this.soundLoaded = 1;
         this.useSound = 0;
         this.dataColors = new int[]{-1, -16777216, -16777216, -1052689};
+
     }
 
     static {
@@ -1263,10 +1486,14 @@ public class GameActivity extends CommonActivity {
         velHitMax = 1.4f;
         edgeLoc = 0.03f;
         goalWidth = 0.39f;
+        goalWidthPlayer = 0.39f;
         ballRad = 0.045f;
         malletMiddleRad = 0.06f;
         malletOuterRad = 0.09f;
         malletInnerRad = 0.03f;
+        malletMiddleRad2 = 0.06f;
+        malletOuterRad2 = 0.09f;
+        malletInnerRad2 = 0.03f;
         decelHit = 0.8f;
         fieldColor = new int[]{-1, -16777216};
         lineColor = new int[]{-16744704, -8421505};
@@ -1361,6 +1588,7 @@ public class GameActivity extends CommonActivity {
         super.onCreate(savedInstanceState);
         Log.d(CommonActivity.TAG, "oncreate for Playgame");
         requestWindowFeature(1);
+
         getWindow().setFlags(AccessibilityNodeInfoCompat.ACTION_NEXT_HTML_ELEMENT, AccessibilityNodeInfoCompat.ACTION_NEXT_HTML_ELEMENT);
         setContentView(R.layout.activity_game);
         this.gGameSettings = getSharedPreferences(CommonActivity.GAME_PREFERENCES, 0);
@@ -1370,6 +1598,8 @@ public class GameActivity extends CommonActivity {
         this.soundSet = this.gGameSettings.getInt(CommonActivity.GAME_PREFERENCES_VOLUME, 0);
         Editor editor = this.gGameSettings.edit();
         editor.putString(CommonActivity.GAME_PREFERENCES_FEEDBACK, "");
+
+
         editor.commit();
         switch (this.soundSet) {
             case DialogFragment.STYLE_NORMAL /*0*/:
@@ -1427,7 +1657,7 @@ public class GameActivity extends CommonActivity {
         this.path = new Path();
         LinearLayout layout = (LinearLayout) findViewById(R.id.mainLayout);
         if (this.gameType.equals("pro")) {
-            layout.getLayoutParams().height = 0;
+            //layout.getLayoutParams().height = 0;
             this.aa = 0;
             while (this.aa < 3) {
                 this.relBatSize[this.aa] = relBatSizePro[this.aa];
@@ -1460,6 +1690,26 @@ public class GameActivity extends CommonActivity {
         IntentFilter filter = new IntentFilter("android.intent.action.SCREEN_ON");
         filter.addAction("android.intent.action.SCREEN_OFF");
         registerReceiver(new ScreenReceiver(), filter);
+
+        Button bt =(Button) findViewById(R.id.changeMalletSize);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Background bck = new Background(GameActivity.this);
+                trackMalletTime = System.currentTimeMillis();
+                bck.setPlayerMalletSize();
+            }
+        });
+
+        Button btGoal =(Button) findViewById(R.id.changeGoalSize);
+        btGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Background bck2 = new Background(GameActivity.this);
+                trackGoalTime= System.currentTimeMillis();
+                bck2.setGoalSize();
+            }
+        });
     }
 
     public void onDestroy() {
@@ -1499,4 +1749,6 @@ public class GameActivity extends CommonActivity {
         this.gameEndTime = (this.pausedGameEndTime - this.pausedTime) + this.currentTime;
         ((RelativeLayout) findViewById(R.id.layoutGame)).invalidate();
     }
+
+
 }
